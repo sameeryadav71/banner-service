@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +17,9 @@ public class ImageServiceImpl implements ImageService{
 	public String uploadImge(String path, MultipartFile multipartFile) throws IOException {
 		// TODO Auto-generated method stub
 		String name = multipartFile.getOriginalFilename();
-		String filePath = path+File.separator+(UUID.randomUUID().toString()).concat(name.substring(name.lastIndexOf(".")));;
+		String filePath = path+File.separator+name;
+		//String filePath = path+File.separator+(UUID.randomUUID().toString()).concat(name.substring(name.lastIndexOf(".")));;
+
 		File file = new File(path);
 		if(!file.exists()) {
 			file.mkdir();
