@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,12 +22,18 @@ public class Banner {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	@JsonIgnore
 	@Transient
 	private MultipartFile bannerImage;
+	@Transient
+	private String message;
 	private String bannerName;
 	private Integer priority;
 	private Date createdDate;
 	private String bannerDesription;
+	
+	@JsonIgnore
 	@Column(length = 50000000)
 	private byte[] imageBytes;
 
@@ -87,11 +96,19 @@ public class Banner {
 		this.bannerImage = bannerImage;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	@Override
 	public String toString() {
-		return "Banner [id=" + id + ", bannerImage=" + bannerImage + ", bannerName=" + bannerName + ", priority="
-				+ priority + ", createdDate=" + createdDate + ", bannerDesription=" + bannerDesription + ", imageBytes="
-				+ Arrays.toString(imageBytes) + "]";
+		return "Banner [id=" + id + ", bannerImage=" + bannerImage + ", message=" + message + ", bannerName="
+				+ bannerName + ", priority=" + priority + ", createdDate=" + createdDate + ", bannerDesription="
+				+ bannerDesription + ", imageBytes=" + Arrays.toString(imageBytes) + "]";
 	}
 
 }

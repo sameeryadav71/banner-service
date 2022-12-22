@@ -39,7 +39,7 @@ public class BannerController {
 	private String path;
 
 	@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<ImageResponse> saveBanner(@RequestPart("image") MultipartFile image,
+	public ResponseEntity<?> saveBanner(@RequestPart("image") MultipartFile image,
 			@RequestPart("description") String description,
 			@RequestPart(name = "priority", required = false) String priority) {
 		Banner banner = null;
@@ -50,9 +50,10 @@ public class BannerController {
 			return new ResponseEntity<>(new ImageResponse(null, "Image not uploaded"),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if (banner != null)
-			return new ResponseEntity<>(new ImageResponse(image.getOriginalFilename(), "Image uploaded successfully"),
-					HttpStatus.OK);
+		if (banner != null) {
+			banner.setMessage("Image uploaded successfully");
+			return new ResponseEntity<>(banner,HttpStatus.OK);	
+		}
 		else
 			return new ResponseEntity<>(new ImageResponse(image.getOriginalFilename(),
 					"Image already exists please choose different image!!"), HttpStatus.OK);
