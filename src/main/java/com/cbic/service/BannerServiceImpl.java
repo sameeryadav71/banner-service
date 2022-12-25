@@ -13,9 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cbic.entity.Banner;
 import com.cbic.repository.BannerRepository;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class BannerServiceImpl implements BannerService {
 
+	@Autowired
+	private EntityManager entityManager;
+	
 	@Autowired
 	private BannerRepository bannerRepository;
 
@@ -64,8 +69,7 @@ public class BannerServiceImpl implements BannerService {
 		return null;
 	}
 
-	@Override
-	public Banner saveBanner(MultipartFile multipartFile, String description, String priority) {
+	public Banner saveBanner(MultipartFile multipartFile, String description, Integer priority, Date startDate, Date endDate) {
 		Banner existingBanner = null;
 		try {
 			existingBanner = bannerRepository.findByBannerName(multipartFile.getOriginalFilename());
@@ -73,9 +77,12 @@ public class BannerServiceImpl implements BannerService {
 				Banner banner = new Banner();
 				banner.setBannerDesription(description);
 				banner.setBannerName(multipartFile.getOriginalFilename());
-				banner.setPriority(null != priority ? Integer.parseInt(priority) : 1);
+				banner.setPriority(priority);
 				banner.setCreatedDate(new Date());
 				banner.setImageBytes(multipartFile.getBytes());
+				banner.setImagePath(path+multipartFile.getOriginalFilename());
+				banner.setStartDate(startDate);
+				banner.setEndDate(endDate);
 				imageService.uploadImge(path, multipartFile);
 				return bannerRepository.save(banner);
 			}
@@ -83,6 +90,20 @@ public class BannerServiceImpl implements BannerService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Banner> getTop6Banners() {
+		// TODO Auto-generated method stub
+		List<Banner> banners =  null;
+		try {		
+			banners = entityManager.createNativeQuery("SELECT * FROM BANNER ORDER BY ID DESC ", Banner.class).setMaxResults(6).getResultList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return banners;
 	}
 
 }

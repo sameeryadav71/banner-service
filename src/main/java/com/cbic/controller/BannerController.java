@@ -2,10 +2,12 @@ package com.cbic.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,13 +41,15 @@ public class BannerController {
 	@Value("${project.image}")
 	private String path;
 
-	@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/save")
 	public ResponseEntity<?> saveBanner(@RequestPart("image") MultipartFile image,
-			@RequestPart("description") String description,
-			@RequestPart(name = "priority", required = false) String priority) {
+			@RequestParam("description") String description,
+			@RequestParam("startDate") @DateTimeFormat(pattern="yyyy-MM-dd")Date startDate,
+			@RequestParam("endDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate,
+			@RequestParam(name = "priority", required = false) Integer priority) {
 		Banner banner = null;
 		try {
-			banner = bannerService.saveBanner(image, description, priority);
+			banner = bannerService.saveBanner(image, description, priority, startDate, endDate);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(new ImageResponse(null, "Image not uploaded"),
@@ -70,6 +75,11 @@ public class BannerController {
 		}
 		return banners;
 
+	}
+	
+	@GetMapping("/getTopBanners")
+	public List<Banner> getAllBannersBySize() {
+		return bannerService.getTop6Banners();
 	}
 	
 	@GetMapping(value = "db/{imageName}",

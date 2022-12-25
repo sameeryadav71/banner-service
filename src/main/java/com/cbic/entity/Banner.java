@@ -1,11 +1,12 @@
 package com.cbic.entity;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cbic.util.DateHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,9 +30,14 @@ public class Banner {
 	@Transient
 	private String message;
 	private String bannerName;
+	private String imagePath;
 	private Integer priority;
 	private Date createdDate;
 	private String bannerDesription;
+	@JsonDeserialize(using = DateHandler.class)
+	private Date startDate;
+	@JsonDeserialize(using = DateHandler.class)
+	private Date endDate;
 	
 	@JsonIgnore
 	@Column(length = 50000000)
@@ -104,11 +110,35 @@ public class Banner {
 		this.message = message;
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
 	@Override
 	public String toString() {
 		return "Banner [id=" + id + ", bannerImage=" + bannerImage + ", message=" + message + ", bannerName="
-				+ bannerName + ", priority=" + priority + ", createdDate=" + createdDate + ", bannerDesription="
-				+ bannerDesription + ", imageBytes=" + Arrays.toString(imageBytes) + "]";
+				+ bannerName + ", imagePath=" + imagePath + ", priority=" + priority + ", createdDate=" + createdDate
+				+ ", bannerDesription=" + bannerDesription + ", startDate=" + startDate + ", endDate=" + endDate + "]";
 	}
 
 }
